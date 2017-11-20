@@ -1,0 +1,13 @@
+cluster.name: docker-example
+
+node.name: docker-node-1
+
+path.data: /home/esuser/data
+
+network.host: 0.0.0.0
+
+network.bind_host: 0
+
+transport.bind_host: 0
+
+transport.host: 0.0.0.0

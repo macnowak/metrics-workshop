@@ -1,0 +1,69 @@
+version: '2'
+
+services:
+  java:
+    build: java_image/.
+    image: java_image
+    container_name: "metrics_java"
+  elastic:
+    build: elastic/.
+    image: elastic
+    container_name: "metrics_elastic"
+    user: esuser
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    depends_on:
+      - java
+    networks:
+      - metrics-workshop
+  logstash-metrics:
+    build: logstash/.
+    image: logstash
+    container_name: "metrics_logstash"
+    ports:
+      - "5044:5044"
+    networks:
+      - metrics-workshop
+    links:
+      - elastic:elastic
+    depends_on:
+      - elastic
+  kibana:
+    build: kibana/.
+    image: kibana
+    container_name: "metrics_kibana"
+    ports:
+      - "5601:5601"
+    networks:
+      - metrics-workshop
+    links:
+      - elastic:elastic
+    depends_on:
+      - elastic
+  grapfana:
+      build: grafana/.
+      image: grafana
+      container_name: "metrics_grafana"
+      ports:
+        - "3000:3000"
+      networks:
+        - metrics-workshop
+      depends_on:
+        - prometheus
+  prometheus:
+      volumes:
+        - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      command:
+        - '-config.file=/etc/prometheus/prometheus.yml'
+      image: prom/prometheus
+      ports:
+        - "9090:9090"
+      networks:
+        - metrics-workshop
+      container_name: "metrics_prometheus"
+
+
+networks:
+  metrics-workshop:
+    driver: bridge
