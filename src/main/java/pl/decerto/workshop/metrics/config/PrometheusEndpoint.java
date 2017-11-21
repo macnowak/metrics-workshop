@@ -29,7 +29,7 @@ class PrometheusEndpoint extends AbstractEndpoint<String> {
 			return stringWriter.toString();
 		} catch (IOException e) {
 			LOG.error(e.getMessage(), e);
-			return "Error occurred : " + e.getMessage();
+			return "Error occurred: " + e.getMessage();
 		}
 
 	}
