@@ -1,15 +1,29 @@
-## Docker configuration :
+# Metrics + ELK workshop :
 
-* MySql :
-docker run -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=audit -e MYSQL_USER=audit -e MYSQL_PASSWORD=audit -d mysql:latest
+Sample application build to present how to gather basic metrics 
 
-## Running :
+* Spring boot ( JPA, Web, Actuator )
+* H2
+* Hikari
+* DropWizard metrics 
+* Prometheus
+
+## Running app
+
+* ./gradlew bootRun
+
+
+##  Running docker:
 
 * docker-compose up
 * ES - http://localhost:9200/
 * KIBANA - http://localhost:5601
-* GRAPHITE - http://localhost:80
+* GRAFANA - http://localhost:3000
 * PROMETHEUS - http://localhost:9090
 
-1. edytujemy prometheus/prometheus.yaml
-2. curl -X POST http://localhost:9090/-/reload
+
+#### Tips & Tricks 
+
+ Reload prometheus config:
+ * edit prometheus/prometheus.yaml
+ * curl -X POST http://localhost:9090/-/reload
