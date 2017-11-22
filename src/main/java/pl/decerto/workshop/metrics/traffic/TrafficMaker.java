@@ -13,23 +13,34 @@ import org.springframework.web.client.RestTemplate;
 @Component
 class TrafficMaker implements AutoCloseable, ApplicationListener<EmbeddedServletContainerInitializedEvent> {
 
+	private final Logger log = LoggerFactory.getLogger(TrafficMaker.class);
+
 	private final RestTemplate restTemplate;
 
 	private final ScheduledExecutorService scheduledExecutorService;
 
-	TrafficMaker(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
+	TrafficMaker() {
+		this.restTemplate = new RestTemplate();
 		scheduledExecutorService = new ScheduledThreadPoolExecutor(10);
 	}
 
 	@Override
 	public void close() throws Exception {
 		scheduledExecutorService.shutdown();
-		scheduledExecutorService.awaitTermination(1, TimeUnit.SECONDS);
 	}
 
-	public void start() {
-		scheduledExecutorService.scheduleAtFixedRate(new EndpointCaller(restTemplate), 3000, 100, TimeUnit.MILLISECONDS);
+	void start() {
+		scheduledExecutorService.scheduleAtFixedRate(() -> {
+			final String url = "http://localhost:8080/movie/" + createMovieName();
+			log.info("Calling {} ", url);
+			restTemplate.postForObject(url, null, String.class);
+		}, 3000, 100, TimeUnit.MILLISECONDS);
+
+		scheduledExecutorService.scheduleAtFixedRate(() -> {
+			final String url = "http://localhost:8080/movie";
+			log.info("Calling {} ", url);
+			restTemplate.getForEntity(url, null, String.class);
+		}, 3000, 500, TimeUnit.MILLISECONDS);
 	}
 
 	@Override
@@ -37,32 +48,8 @@ class TrafficMaker implements AutoCloseable, ApplicationListener<EmbeddedServlet
 		start();
 	}
 
-	private class EndpointCaller implements Runnable {
-
-		private final Logger logger = LoggerFactory.getLogger(EndpointCaller.class);
-
-		private final RestTemplate restTemplate;
-
-		private EndpointCaller(RestTemplate restTemplate) {
-			this.restTemplate = restTemplate;
-		}
-
-		@Override
-		public void run() {
-			try {
-				doCall();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		private void doCall() {
-			logger.info("Calling endpoint");
-			restTemplate.postForObject("http://localhost:8080/movie/" + getMovieName(), null, String.class);
-		}
-
-		private String getMovieName() {
-			return "someMovie" + System.currentTimeMillis();
-		}
+	private String createMovieName() {
+		return "someMovie" + System.currentTimeMillis();
 	}
+
 }
