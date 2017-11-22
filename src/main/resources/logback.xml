@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+	<property name="DEBUG_PATTERN"
+			  value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%t] %-40.40logger{39} [%X{object}] %msg%n"/>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
@@ -10,14 +12,34 @@
 		</layout>
 	</appender>
 
+	<!-- DEBUG -->
+	<appender name="DEB" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>1000</queueSize>
+		<discardingThreshold>0</discardingThreshold>
+		<appender name="DEBUG-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>logs/debug.log</file>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<fileNamePattern>logs/debug_%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+				<maxFileSize>500MB</maxFileSize>
+				<maxHistory>10</maxHistory>
+				<totalSizeCap>1GB</totalSizeCap>
+			</rollingPolicy>
+			<encoder>
+				<pattern>${DEBUG_PATTERN}</pattern>
+				<charset>utf8</charset>
+			</encoder>
+		</appender>
+	</appender>
+
 
 	<logger name="metrics" additivity="FALSE" level="debug">
 		<appender-ref ref="STDOUT"/>
 	</logger>
 
 
-	<root level="info">
+	<root level="INFO">
 		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="DEB"/>
 	</root>
 
 </configuration>

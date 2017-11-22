@@ -41,6 +41,16 @@ services:
       - elastic:elastic
     depends_on:
       - elastic
+  filebeat:
+    container_name: metrics_filebeat
+    image: prima/filebeat
+    volumes:
+      - ./filebeat/filebeat.yml:/filebeat.yml
+      - ../logs:/logs
+    networks:
+      - metrics-workshop
+    depends_on:
+      - logstash-metrics
   grapfana:
       build: grafana/.
       image: grafana
