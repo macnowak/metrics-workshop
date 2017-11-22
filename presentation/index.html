@@ -24,12 +24,17 @@
 	</script>
 </head>
 <body>
+<a style="display: block;" href="https://www.decerto.pl">
+	<img style="position: absolute; top: 0; right: 1; border: 0; width: 285px; height: 90px; margin: 60px 100px"
+		 src="http://www.decerto.pl/assets/base/img/layout/logos/logo-decerto-big2.png" alt="www.decerto.pl">
+</a>
 <div class="reveal">
 	<div class="slides">
 		<section>
 			<section class="intro">
-				<h1>Metrics + ELK</h1>
-				<h2>workshop</h2>
+				<h1>Metrics & ELK</h1>
+				<br>
+				<h6>Janusz Dorosz   &  Maciej Nowak</h6>
 				<h6>23-11-2017</h6>
 			</section>
 		</section>
@@ -39,6 +44,7 @@
 				<li class="fragment">Create sample app</li>
 				<li class="fragment">What can we measure</li>
 				<li class="fragment">How do we measure</li>
+				<li class="fragment">Why do we need metrics</li>
 				<li class="fragment">Get familiar with drop wizard metrics</li>
 				<li class="fragment">Two ways of collection metrics</li>
 				<li class="fragment">How to collect logs</li>
@@ -47,37 +53,115 @@
 		</section>
 		<section>
 			<h2>Create sample app</h2>
-
-
 			<br/>
 			<pre><code class="bash hljs" data-trim data-noescape>
 				//download
-git clone ...
+				$ git clone https://github.com/macnowak/metrics-workshop
 
 				//run
-				$ bin/elasticsearch
+				$ cd docker
+				$ docker-compose up
 			</code></pre>
-
-
-			$ gradle build
-
 		</section>
 		<section>
-			<h2>What can we measure</h2>
+			<section>
+				<h2>What can we measure</h2>
+			</section>
+			<section>
+				<h2>How many times </h2>
+				<img src="img/counter_light.PNG" class="plain">
+			</section>
+			<section>
+				<h2>How many times </h2>
+				<pre><code>metricRegistry.counter("my-counter").inc()
+metricRegistry.counter("my-counter").dec()
+</code></pre>
+			</section>
+			<section>
+				<h2>How often </h2>
+				<img src="img/rate_light.PNG" class="plain">
+			</section>
+			<section>
+				<h2>How often </h2>
+				<pre><code>metricRegistry.meter("my-meter").mark()
+metricRegistry.meter("my-meter").mark(10)
+</code></pre>
+			</section>
+			<section>
+				<h2>Current value</h2>
+				<img src="img/count_light.PNG" class="plain">
+			</section>
+			<section>
+				<h2>Current value</h2>
+				<pre><code>metricRegistry.register("my-gauge", (Gauge<Long>) () -> 10)</code></pre>
+			</section>
+
+			<section>
+				<h2>How long does it take?</h2>
+				<img src="img/time_light.PNG" class="plain">
+			</section>
+			<section>
+				<h2>How long does it take?</h2>
+				<pre><code>try (Timer.Context c = metricRegistry.timer("my-timer").time()) {
+/* .. */
+}</code></pre>
+			</section>
 		</section>
 		<section>
-			<h2>How do we measure</h2>
-			<br/>
-			percentiles not mean
+			<section>
+				<h2>How do we measure</h2>
+			</section>
+			<section>
+				<img src="img/mean-median.png" class="plain">
+			</section>
+			<section>
+				<img src="img/99-percentile.png" class="plain">
+			</section>
+			<section>
+				<h2>Use percentiles not mean</h2>
+			</section>
+
+			<section>
+				<h2>What are percentiles</h2>
+				<span>
+					<ul>
+						<li class="fragment">p50 => 50 of 100 have..</li>
+						<li class="fragment">p75 => 75 of 100 have..</li>
+						<li class="fragment">p99 => 99 of 100 have..</li>
+					</ul>
+				</span>
+			</section>
+		</section>
+		<section>
+			<h2>Why do we need metrics</h2>
+			<ul>
+				<li class="fragment">To understand application</li>
+				<li class="fragment">To find bottlenecks</li>
+				<li class="fragment">Easy to access</li>
+				<li class="fragment">Basics to build monitoring and alerting</li>
+				<li class="fragment">They look nice :)</li>
+			</ul>
 		</section>
 		<section>
 			<h2>Get familiar with drop wizard metrics</h2>
 			<br/>
-
+			<pre><code>https://github.com/dropwizard/metrics</code></pre>
+			<pre><code>compile('io.dropwizard.metrics:metrics-core:3.1.2')</code></pre>
 		</section>
 		<section>
-			<h2>Two ways of collection metrics</h2>
+			<section>
+				<h2>Two ways of collection metrics</h2>
+			</section>
+			<section>
+				<h2>Pull</h2>
+				<img src="img/pull.png" class="plain">
+			</section>
+			<section>
+				<h2>Push</h2>
+				<img src="img/push.png" class="plain">
+			</section>
 		</section>
+
 		<section>
 			<h2>How to collect logs</h2>
 		</section>

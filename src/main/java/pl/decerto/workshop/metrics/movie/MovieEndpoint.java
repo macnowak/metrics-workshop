@@ -14,8 +14,11 @@ class MovieEndpoint {
 
 	private final MovieRepository movieRepository;
 
-	public MovieEndpoint(MovieRepository movieRepository) {
+	private final MovieSaver movieSaver;
+
+	public MovieEndpoint(MovieRepository movieRepository, MovieSaver movieSaver) {
 		this.movieRepository = movieRepository;
+		this.movieSaver = movieSaver;
 	}
 
 	@Timed(name = "movie.get", absolute = true)
@@ -27,7 +30,7 @@ class MovieEndpoint {
 	@Timed(name = "movie.add", absolute = true)
 	@RequestMapping(method = RequestMethod.POST, path = "/{name}")
 	void add(@PathVariable(name = "name") String name) {
-		movieRepository.save(new Movie(name));
+		movieSaver.save(new Movie(name));
 	}
 
 }

@@ -12,7 +12,28 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
  *********************************************/
 body {
   background: #fff;
-  background-color: #fff; }
+  background-color: #fff;
+}
+
+h1.site-title {
+  float: left;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin-top: 0px;
+  margin-bottom: 0px;
+
+}
+
+.site-title a {
+  display: inline-block;
+  height: 4.25rem;
+  width: 12rem;
+  margin: 1.125rem 0.75rem;
+  background: url(/img/logo-decerto-big2.png) no-repeat left center;
+  background-size: auto auto;
+  background-size: contain;
+  text-indent: -9999em;
+}
 
 .reveal {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
@@ -46,8 +67,8 @@ body {
 .reveal h6 {
   margin: 0 0 20px 0;
   color: #222;
-  font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-weight: 600;
+  font-family: freight-sans-pro, sans-serif;
+  font-weight: 400;
   line-height: 1.2;
   letter-spacing: normal;
   text-transform: uppercase;
