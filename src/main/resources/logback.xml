@@ -13,7 +13,7 @@
 	</appender>
 
 	<!-- DEBUG -->
-	<appender name="DEB" class="ch.qos.logback.classic.AsyncAppender">
+	<appender name="LOGS" class="ch.qos.logback.classic.AsyncAppender">
 		<queueSize>1000</queueSize>
 		<discardingThreshold>0</discardingThreshold>
 		<appender name="DEBUG-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -36,10 +36,12 @@
 		<appender-ref ref="STDOUT"/>
 	</logger>
 
+	<logger name="pl.decerto.workshop.metrics.logs.LogGenerator" additivity="FALSE" level="INFO">
+		<appender-ref ref="LOGS"/>
+	</logger>
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT"/>
-		<appender-ref ref="DEB"/>
 	</root>
 
 </configuration>
