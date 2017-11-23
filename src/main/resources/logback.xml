@@ -2,7 +2,7 @@
 <configuration>
 
 	<property name="DEBUG_PATTERN"
-			  value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%t] %-40.40logger{39} [%X{object}] %msg%n"/>
+			  value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-4level [%t] %-40.40logger{39} [%X{object}] %msg%n"/>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
