@@ -23,4 +23,4 @@ scrape_configs:
     scrape_timeout: 10s
     metrics_path: '/manage/prometheus'
     static_configs:
-      - targets: ['192.168.0.13:8080']
+      - targets: ['192.168.0.13:8080','10.79.213.48:8080']

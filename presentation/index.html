@@ -50,11 +50,21 @@
 				<li class="fragment">How to collect logs</li>
 				<li class="fragment">ELK</li>
 			</ul>
+
+			<aside class="notes" data-markdown="">
+				* Utworzymy aplikację z prostymi metrykami
+				* Dowiemy się co można mierzyć
+				* Jak można mierzyć
+				* I po co nam są metryki
+				* Wszystko wykonamy przy użyciu liba dropwizard metrics
+				* Opowiemy sobie o dwóch sposobach zbierania metryk
+				* Potem Janusz pokaże jak konfigurować logi i stos ELK
+			</aside>
 		</section>
 		<section>
-			<h2>Create sample app</h2>
-			<br/>
-			<pre><code class="bash hljs" data-trim data-noescape>
+			<section><h2>Create sample app</h2>
+				<br/>
+				<pre><code class="bash hljs" data-trim data-noescape>
 				//download
 				$ git clone https://github.com/macnowak/metrics-workshop
 
@@ -62,6 +72,17 @@
 				$ cd docker
 				$ docker-compose up
 			</code></pre>
+			</section>
+			<section>
+				<h2>We will measure</h2>
+				<ul>
+					<li class="fragment">JVM heap</li>
+					<li class="fragment">Endpoint read / write rate</li>
+					<li class="fragment">Endpoint read / write time</li>
+					<li class="fragment">Queue utilization</li>
+					<li class="fragment">DB pool size / usage</li>
+				</ul>
+			</section>
 		</section>
 		<section>
 			<section>
@@ -73,7 +94,7 @@
 			</section>
 			<section>
 				<h2>How many times </h2>
-				<pre><code>metricRegistry.counter("my-counter").inc()
+				<pre><code class="java hljs" data-trim data-noescape>metricRegistry.counter("my-counter").inc()
 metricRegistry.counter("my-counter").dec()
 </code></pre>
 			</section>
@@ -83,7 +104,7 @@ metricRegistry.counter("my-counter").dec()
 			</section>
 			<section>
 				<h2>How often </h2>
-				<pre><code>metricRegistry.meter("my-meter").mark()
+				<pre><code class="java hljs" data-trim data-noescape>metricRegistry.meter("my-meter").mark()
 metricRegistry.meter("my-meter").mark(10)
 </code></pre>
 			</section>
@@ -93,7 +114,7 @@ metricRegistry.meter("my-meter").mark(10)
 			</section>
 			<section>
 				<h2>Current value</h2>
-				<pre><code>metricRegistry.register("my-gauge", (Gauge<Long>) () -> 10)</code></pre>
+				<pre><code class="java hljs" data-trim data-noescape>metricRegistry.register("my-gauge", (Gauge<Long>) () -> 10)</code></pre>
 			</section>
 
 			<section>
@@ -102,7 +123,7 @@ metricRegistry.meter("my-meter").mark(10)
 			</section>
 			<section>
 				<h2>How long does it take?</h2>
-				<pre><code>try (Timer.Context c = metricRegistry.timer("my-timer").time()) {
+				<pre><code class="java hljs" data-trim data-noescape>try (Timer.Context c = metricRegistry.timer("my-timer").time()) {
 /* .. */
 }</code></pre>
 			</section>
@@ -113,14 +134,43 @@ metricRegistry.meter("my-meter").mark(10)
 			</section>
 			<section>
 				<img src="img/mean-median.png" class="plain">
+				<i class="small-font">https://www.elastic.co/blog/averages-can-dangerous-use-percentile</i>
+				<aside class="notes" data-markdown="">
+					Nie wygląda to źle, wszystkie odpowiedzi są koło 50ms ...
+				</aside>
 			</section>
 			<section>
 				<img src="img/99-percentile.png" class="plain">
+				<i class="small-font">https://www.elastic.co/blog/averages-can-dangerous-use-percentile</i>
+				<aside class="notes" data-markdown="">
+					* 99% wartości jest mniejsza niż 850ms co jest innym obrazem niz średnia koło 50ms.
+					* Jeden procetu użytkowników ma 800+ms odpowiedzi.
+					* Trochę lipa w biznesie
+				</aside>
+			</section>
+			<section>
+				<h2>Anscombe's quartet</h2>
+				<img src="img/990px-Anscombe's_quartet_3.svg.png" class="plain" height="420">
+				<br>
+				<i class="small-font">https://pl.wikipedia.org/wiki/Kwartet_Anscombe%E2%80%99a</i>
+				<aside class="notes" data-markdown="">
+					zestaw czterech zestawów danych o identycznych cechach statystycznych,
+					takich jak średnia arytmetyczna,
+					wariancja, współczynnik korelacji czy równanie regresji liniowej,
+					jednocześnie wyglądających zgoła różnie przy przedstawieniu graficznym.
+				</aside>
 			</section>
 			<section>
 				<h2>Use percentiles not mean</h2>
-			</section>
+				<blockquote cite="https://www.elastic.co/blog/averages-can-dangerous-use-percentile">
+					Most people reach for basic statistics like mean, median or max.
+					Each have their place, but for populations of data they often hide the truth.
+					Mean and median tend to hide outliers, since the majority of your data is “normal”.
+					In contrast, the max is a hypercondriac and easily distorted by a single outlier.</blockquote>
+				<aside class="notes" data-markdown="">
 
+				</aside>
+			</section>
 			<section>
 				<h2>What are percentiles</h2>
 				<span>
@@ -130,6 +180,11 @@ metricRegistry.meter("my-meter").mark(10)
 						<li class="fragment">p99 => 99 of 100 have..</li>
 					</ul>
 				</span>
+				<aside class="notes" data-markdown="">
+					* p50 => połowa użytkowników ma źle
+					* p75 => 25% użytkowników ma źle
+					* p99 => 1% użytkowników ma źle
+				</aside>
 			</section>
 		</section>
 		<section>
@@ -155,10 +210,14 @@ metricRegistry.meter("my-meter").mark(10)
 			<section>
 				<h2>Pull</h2>
 				<img src="img/pull.png" class="plain">
+				<br/>
+				<i>https://prometheus.io/</i>
 			</section>
 			<section>
 				<h2>Push</h2>
 				<img src="img/push.png" class="plain">
+				<br/>
+				<i>https://graphiteapp.org/</i>
 			</section>
 		</section>
 

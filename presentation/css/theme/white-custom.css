@@ -35,6 +35,11 @@ h1.site-title {
   text-indent: -9999em;
 }
 
+.small-font {
+ font-size: 0.7em;
+}
+
+
 .reveal {
   font-family: "Source Sans Pro", Helvetica, sans-serif;
   font-size: 32px;
